@@ -27,7 +27,7 @@ class QueryFWrapper
     public function findObjectById($id)
     {
         try {
-            if (class_exists('swoole_table')) {
+            if (class_exists('swoole_table') && php_sapi_name() !== "apache" && php_sapi_name() !== "fpm-fcgi") {
                 RouteTable::getInstance();
                 $result = RouteTable::getRouteInfo($id);
                 $routeInfo = $result['routeInfo'];
@@ -59,6 +59,16 @@ class QueryFWrapper
 
             return $routeInfo;
         } catch (\Exception $e) {
+
+            // 发生异常之后,需要对主控进行兜底
+            if (class_exists('swoole_table') && php_sapi_name() !== "apache" && php_sapi_name() !== "fpm-fcgi") {
+                RouteTable::getInstance();
+                $result = RouteTable::getRouteInfo($id);
+                $routeInfo = $result['routeInfo'];
+
+                return $routeInfo;
+            }
+
             throw $e;
         }
     }

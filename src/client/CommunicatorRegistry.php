@@ -96,7 +96,7 @@ class CommunicatorRegistry
         }
     }
 
-    private function socketTcp($sIp, $iPort, $requestBuf, $timeout = 2)
+    private function socketTcp($sIp, $iPort, $requestBuf, $timeout = 5)
     {
         $time = microtime(true);
 
@@ -151,7 +151,7 @@ class CommunicatorRegistry
         return $responseBuf;
     }
 
-    private function socketUdp($sIp, $iPort, $requestBuf, $timeout = 2)
+    private function socketUdp($sIp, $iPort, $requestBuf, $timeout = 5)
     {
         $time = microtime(true);
         $sock = \socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
@@ -214,9 +214,9 @@ class CommunicatorRegistry
             return $responseBuf;
         }
     }
-    private function swooleTcp($sIp, $iPort, $requestBuf, $timeout = 2)
+    private function swooleTcp($sIp, $iPort, $requestBuf, $timeout = 5)
     {
-        $client = new \swoole_client(SWOOLE_SOCK_TCP | SWOOLE_KEEP);
+        $client = new \swoole_client(SWOOLE_SOCK_TCP);
 
         $client->set(array(
             'open_length_check' => 1,
@@ -284,7 +284,7 @@ class CommunicatorRegistry
         return $tarsResponseBuf;
     }
 
-    private function swooleCoroutineTcp($sIp, $iPort, $requestBuf, $timeout = 2)
+    private function swooleCoroutineTcp($sIp, $iPort, $requestBuf, $timeout = 5)
     {
         $client = new \Swoole\Coroutine\Client(SWOOLE_SOCK_TCP);
 
@@ -354,7 +354,7 @@ class CommunicatorRegistry
         return $responseBuf;
     }
 
-    private function swooleCoroutineUdp($sIp, $iPort, $requestBuf, $timeout = 2)
+    private function swooleCoroutineUdp($sIp, $iPort, $requestBuf, $timeout = 5)
     {
         $client = new \Swoole\Coroutine\Client(SWOOLE_SOCK_UDP);
 
