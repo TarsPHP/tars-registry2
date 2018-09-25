@@ -17,10 +17,6 @@ class EndpointF extends \TARS_Struct
     const GRIDFLAG = 10;
     const WEIGHT = 11;
     const WEIGHTTYPE = 12;
-    const CPULOAD = 13;
-    const SAMPLETIME = 14;
-    const CONTAINERNAME = 15;
-    const GRAYFLAG = 16;
 
     public $host;
     public $port;
@@ -35,10 +31,6 @@ class EndpointF extends \TARS_Struct
     public $gridFlag;
     public $weight;
     public $weightType;
-    public $cpuload;
-    public $sampletime;
-    public $containerName;
-    public $grayFlag;
 
     protected static $fields = array(
         self::HOST => array(
@@ -103,26 +95,6 @@ class EndpointF extends \TARS_Struct
             ),
         self::WEIGHTTYPE => array(
             'name' => 'weightType',
-            'required' => false,
-            'type' => \TARS::INT32,
-            ),
-        self::CPULOAD => array(
-            'name' => 'cpuload',
-            'required' => false,
-            'type' => \TARS::INT32,
-            ),
-        self::SAMPLETIME => array(
-            'name' => 'sampletime',
-            'required' => false,
-            'type' => \TARS::INT64,
-            ),
-        self::CONTAINERNAME => array(
-            'name' => 'containerName',
-            'required' => false,
-            'type' => \TARS::STRING,
-            ),
-        self::GRAYFLAG => array(
-            'name' => 'grayFlag',
             'required' => false,
             'type' => \TARS::INT32,
             ),
