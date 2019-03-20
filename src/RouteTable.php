@@ -6,45 +6,45 @@ use Tars\registry\contract\StoreCacheInterface;
 
 class RouteTable implements StoreCacheInterface
 {
-    private static $_swooleTable;
+    private static $_instance;
 
     const SWOOLE_TABLE_SET_FAILED = -1001;
     const SWOOLE_TABLE_GET_FAILED = -1002;
+    /** @var \swoole_table $swooleTable */
+    public $swooleTable;
 
     // routeInfo由一个结构体组成
     public function __construct($config = [])
     {
         $size = isset($config['size']) ? $config['size'] : 200;
         //100个服务,每个长度1000 需要100000个字节,这里申请200行,对应200个服务
-        self::$_swooleTable = new \swoole_table($size);
-        self::$_swooleTable->column('routeInfo', \swoole_table::TYPE_STRING, 1000);
-        self::$_swooleTable->column('timestamp', \swoole_table::TYPE_INT, 4);
-        self::$_swooleTable->create();
+        $this->swooleTable = new \swoole_table($size);
+        $this->swooleTable->column('routeInfo', \swoole_table::TYPE_STRING, 1000);
+        $this->swooleTable->column('timestamp', \swoole_table::TYPE_INT, 4);
+        $this->swooleTable->create();
     }
-    private function __clone()
-    {
-    }
+
     public static function getInstance()
     {
-        if (self::$_swooleTable) {
-            return self::$_swooleTable;
+        if (self::$_instance) {
+            return self::$_instance;
         } else {
-            new self();
+            self::$_instance = new self();
 
-            return self::$_swooleTable;
+            return self::$_instance;
         }
     }
 
-    public static function setRouteInfo($moduleName, $routeInfo)
+    public function setRouteInfo($moduleName, $routeInfo)
     {
         $routeInfoStr = \serialize($routeInfo);
-        self::getInstance()->set($moduleName,
+        $this->swooleTable->set($moduleName,
             ['routeInfo' => $routeInfoStr, 'timestamp' => time()]);
     }
 
-    public static function getRouteInfo($moduleName)
+    public function getRouteInfo($moduleName)
     {
-        $result = self::getInstance()->get($moduleName);
+        $result = $this->swooleTable->get($moduleName);
         if ($result) {
             $routeInfoStr = $result['routeInfo'];
             $timestamp = $result['timestamp'];

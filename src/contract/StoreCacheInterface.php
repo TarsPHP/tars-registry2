@@ -21,12 +21,12 @@ interface StoreCacheInterface
      * @param $routeInfo
      * @return mixed
      */
-    public static function setRouteInfo($moduleName, $routeInfo);
+    public function setRouteInfo($moduleName, $routeInfo);
 
     /**
      * get route info by moduleName
      * @param $moduleName
      * @return mixed
      */
-    public static function getRouteInfo($moduleName);
+    public function getRouteInfo($moduleName);
 }

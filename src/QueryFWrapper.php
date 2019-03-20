@@ -41,7 +41,7 @@ class QueryFWrapper
     {
         $cacheInstance = self::getStoreCache() ? self::getStoreCache() : RouteTable::getInstance();
         try {
-            $result = $cacheInstance::getRouteInfo($id);
+            $result = $cacheInstance->getRouteInfo($id);
 
             if (isset($result['routeInfo'])) {
                 $routeInfo = $result['routeInfo'];
@@ -60,7 +60,7 @@ class QueryFWrapper
                 $route['bTcp'] = $endpoint['istcp'];
                 $routeInfo[] = $route;
             }
-            $cacheInstance::setRouteInfo($id, $routeInfo);
+            $cacheInstance->setRouteInfo($id, $routeInfo);
 
             return $routeInfo;
         } catch (\Exception $e) {
