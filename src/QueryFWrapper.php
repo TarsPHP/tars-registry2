@@ -2,10 +2,13 @@
 
 namespace Tars\registry;
 
+use Tars\registry\contract\StoreCacheInterface;
 use Tars\Utils;
 
 class QueryFWrapper
 {
+    /** @var StoreCacheInterface */
+    public static $cacheInstance = null;
     protected $_queryF;
     protected $_refreshInterval;
 
@@ -24,19 +27,27 @@ class QueryFWrapper
         $this->_queryF = new QueryFServant($routeInfo, $socketMode, $locatorName);
     }
 
+    public static function initStoreCache(StoreCacheInterface $storeCache)
+    {
+        self::$cacheInstance = $storeCache;
+    }
+
+    public static function getStoreCache()
+    {
+        return self::$cacheInstance;
+    }
+
     public function findObjectById($id)
     {
+        $cacheInstance = self::getStoreCache() ? self::getStoreCache() : RouteTable::getInstance();
         try {
-            if (class_exists('swoole_table') && php_sapi_name() !== "apache" && php_sapi_name() !== "fpm-fcgi") {
-                RouteTable::getInstance();
-                $result = RouteTable::getRouteInfo($id);
-                $routeInfo = $result['routeInfo'];
+            $result = $cacheInstance::getRouteInfo($id);
 
-                if (!empty($routeInfo)) {
-                    $timestamp = $result['timestamp'];
-                    if (time() - $timestamp < $this->_refreshInterval / 1000) {
-                        return $routeInfo;
-                    }
+            if (isset($result['routeInfo'])) {
+                $routeInfo = $result['routeInfo'];
+                $timestamp = $result['timestamp'];
+                if (time() - $timestamp < $this->_refreshInterval / 1000) {
+                    return $routeInfo;
                 }
             }
 
@@ -49,26 +60,10 @@ class QueryFWrapper
                 $route['bTcp'] = $endpoint['istcp'];
                 $routeInfo[] = $route;
             }
-
-            // 这里你能起一个定时器么,i think not, 但是可以起swooletable
-            // 然后在server里面轮询,再去刷swooletable里面缓存的数据
-            if (class_exists('swoole_table') && php_sapi_name() !== "apache" && php_sapi_name() !== "fpm-fcgi") {
-                RouteTable::getInstance();
-                RouteTable::setRouteInfo($id, $routeInfo);
-            }
+            $cacheInstance::setRouteInfo($id, $routeInfo);
 
             return $routeInfo;
         } catch (\Exception $e) {
-
-            // 发生异常之后,需要对主控进行兜底
-            if (class_exists('swoole_table') && php_sapi_name() !== "apache" && php_sapi_name() !== "fpm-fcgi") {
-                RouteTable::getInstance();
-                $result = RouteTable::getRouteInfo($id);
-                $routeInfo = $result['routeInfo'];
-
-                return $routeInfo;
-            }
-
             throw $e;
         }
     }

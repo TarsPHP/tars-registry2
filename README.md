@@ -49,3 +49,8 @@
         echo "result:\n";
         var_dump($result);
 ```
+
+## 4. Changelog
+
+### v0.1.7 (2019-03-20)
+* 主控寻址缓存接口化，方便自定义缓存方式，默认使用swoole table
