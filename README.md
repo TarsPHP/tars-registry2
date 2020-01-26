@@ -1,16 +1,21 @@
-## 主控寻址的模块
+##Master addressing module
 
-## 1、模块说明
-```
-	tars平台的tarsregistry服务提供服务发现的功能。
-        本模块为php提供主控寻址的能力(服务发现)。
-```
 
-## 2、文件说明：
+
+##1. Module description
+
+` ` ` `
+
+The tar registry service of the tar s platform provides the function of service discovery.
+
+This module provides PHP with the ability of master addressing (service discovery).
+
+` ` ` `
+##2. Document description:
 ```
 ├── composer.json
 ├── src
-│   ├── client  //请求主控服务的client代码
+│   ├── client  //Client code requesting the master service
 │   │   ├── Code.php
 │   │   ├── CodeRegistry.php
 │   │   ├── CommunicatorConfig.php
@@ -25,10 +30,10 @@
 │   │   ├── TUPAPIWrapper.php
 │   │   └── TUPAPIWrapperRegistry.php
 │   ├── EndpointF.php       //struct EndpointF 的php类
-│   ├── QueryFServant.php   //直接请求主控服务
-│   ├── QueryFWrapper.php   //优先从内存寻找服务地址，其次从主控寻址
-│   ├── RouteTable.php      //在swoole table里保存服务地址
-│   └── tars   //协议文件             
+│   ├── QueryFServant.php   //Direct request for master service
+│   ├── QueryFWrapper.php   //The priority is to find the service address from memory, and then from the master address
+│   ├── RouteTable.php      //Save the service address in the swoole table
+│   └── tars   //Protocol file            
 │       ├── EndpointF.tars 
 │       └── QueryF.tars 
 └── tests
@@ -36,14 +41,14 @@
 
 ```
 
-## 3、使用示例：
+## 3、Use example:
 ```
-        //从tarsregistry服务寻找服务地址
+        //从tarsregistryService search service address
         $wrapper = new \Tars\registry\QueryFWrapper("tars.tarsregistry.QueryObj@tcp -h 172.16.0.161 -p 17890",1,60000);
         $result = $wrapper->findObjectById("PHPTest.PHPServer.obj");
         var_dump($result);
 
-        //优先从内存寻找服务地址，其次从主控寻址
+        //The priority is to find the service address from memory, and then from the master address
         \Tars\registry\RouteTable::getInstance();
         $result = \Tars\registry\RouteTable::getRouteInfo("PHPTest.PHPServer.obj");
         echo "result:\n";
@@ -53,4 +58,4 @@
 ## 4. Changelog
 
 ### v0.1.7 (2019-03-20)
-* 主控寻址缓存接口化，方便自定义缓存方式，默认使用swoole table
+* Master addressing cache interface, convenient to customize cache mode, default to use swoole table
