@@ -60,11 +60,25 @@ class QueryFWrapper
                 $route['bTcp'] = $endpoint['istcp'];
                 $routeInfo[] = $route;
             }
-            $cacheInstance->setRouteInfo($id, $routeInfo);
+
+            if (count($routeInfo)>0){
+                $cacheInstance->setRouteInfo($id, $routeInfo);
+            }else {
+                if (isset($result['routeInfo'])) {
+                    $routeInfo = $result['routeInfo'];
+                }
+            }
 
             return $routeInfo;
         } catch (\Exception $e) {
-            throw $e;
+            $result = $cacheInstance->getRouteInfo($id);
+            if (isset($result['routeInfo'])) {
+                $routeInfo = $result['routeInfo'];
+                return $routeInfo;
+            }else{
+                throw $e;
+            }
+
         }
     }
 }
